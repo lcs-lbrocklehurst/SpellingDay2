@@ -18,6 +18,8 @@ struct QuizView: View {
     
     @State var history: [Result] = []
     
+    @State var selectedOutcomeFilter: Outcome = .undetermined
+    
     // MARK: Computed properties
     var body: some View {
         
@@ -53,24 +55,35 @@ struct QuizView: View {
                 .padding()
             }
             
-            List(
-                filtering(
-                    originalList: history,
-                    on: .correct
-                )
-            ) { currentResult in
-                HStack {
-                    Image(currentResult.item.imageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 50)
-                    
-                    Text(currentResult.guessProvided)
-                    
-                    Spacer()
-                    
-                    Text(currentResult.outcome.rawValue)
+            VStack {
+                
+                Picker("Filtering on", selection: $selectedOutcomeFilter)  {
+                    // What shows in UI     What goes
+                    Text("All results").tag(Outcome.undetermined)
+                    Text("Correct").tag(Outcome.correct)
+                    Text("Incorrect").tag(Outcome.incorrect)
                 }
+                .padding()
+                
+                List(
+                    filtering(
+                        originalList: history,
+                        on: selectedOutcomeFilter
+                    )
+                ) { currentResult in
+                    HStack {
+                        Image(currentResult.item.imageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 50)
+                        
+                        Text(currentResult.guessProvided)
+                        
+                        Spacer()
+                        
+                        Text(currentResult.outcome.rawValue)
+                    }
+            }
             }
         }
         
